@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Command Center — Daily 8-Hour Mastery Tracker</title>
+  <meta name="description" content="Personal daily learning dashboard tracking Articulation, Databricks, MEAN Stack, AI, and your own project — 8 hours every day." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+</head>
+<body>
+
+<!-- ── TOP BAR ────────────────────────────────────────────────────────────── -->
+<header id="topbar" role="banner">
+  <div class="topbar-brand">
+    <div class="brand-icon" aria-hidden="true">🧠</div>
+    <div class="brand-text">
+      <h1>Learning Command Center</h1>
+      <span>8 Hours · 5 Pillars · 30 Days</span>
+    </div>
+  </div>
+  <div class="topbar-stats">
+    <div class="stat-pill" id="stat-day">
+      <span class="icon">📅</span>
+      <span>Day</span>
+      <span class="value" id="day-number">1</span>
+    </div>
+    <div class="stat-pill" id="stat-streak">
+      <span class="icon">🔥</span>
+      <span>Streak</span>
+      <span class="value" id="streak-count">0</span>
+    </div>
+    <div class="stat-pill" id="stat-xp">
+      <span class="icon">⭐</span>
+      <span>XP</span>
+      <span class="value" id="xp-count">0</span>
+    </div>
+    <div class="stat-pill">
+      <span class="icon">⏱️</span>
+      <span>Today</span>
+      <span class="value" id="hours-done">0h</span>
+    </div>
+  </div>
+  <div class="topbar-date" id="topbar-date" aria-label="Current date"></div>
+</header>
+
+<!-- ── NAV TABS ──────────────────────────────────────────────────────────── -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <button class="nav-tab active" id="tab-dashboard"  data-tab="dashboard"  aria-selected="true">
+    🏠 Dashboard
+  </button>
+  <button class="nav-tab" id="tab-plan" data-tab="plan" aria-selected="false">
+    📅 Today's Plan
+  </button>
+  <button class="nav-tab" id="tab-kanban" data-tab="kanban" aria-selected="false">
+    🗂️ Kanban Board
+  </button>
+  <button class="nav-tab" id="tab-progress" data-tab="progress" aria-selected="false">
+    📈 Progress
+  </button>
+  <button class="nav-tab" id="tab-resources" data-tab="resources" aria-selected="false">
+    📚 Resources
+  </button>
+</nav>
+
+<!-- ── MAIN ──────────────────────────────────────────────────────────────── -->
+<main id="main" role="main">
+
+  <!-- ═══════════════════════════════════════════════════ DASHBOARD ═══════ -->
+  <section id="panel-dashboard" class="tab-panel active" aria-labelledby="tab-dashboard">
+
+    <!-- Overall Progress -->
+    <div class="overall-progress-card">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Today's Overall Progress</div>
+          <div class="section-sub" id="overall-sub">Start your first session to track progress</div>
+        </div>
+        <div class="progress-stats">
+          <div class="pstat">
+            <div class="pstat-value" id="pct-overall">0%</div>
+            <div class="pstat-label">Complete</div>
+          </div>
+          <div class="pstat">
+            <div class="pstat-value" id="tasks-done-count">0/15</div>
+            <div class="pstat-label">Tasks Done</div>
+          </div>
+          <div class="pstat">
+            <div class="pstat-value" id="time-spent">0h 0m</div>
+            <div class="pstat-label">Time Focused</div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar-overall" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+
+    <!-- Pillar Cards -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Your 5 Learning Pillars</div>
+        <div class="section-sub">Click a pillar card to start a Pomodoro timer</div>
+      </div>
+      <button class="btn-primary" id="mark-day-complete-btn">✅ Mark Day Complete</button>
+    </div>
+    <div class="pillars-grid" id="pillars-grid">
+      <!-- Injected by app.js -->
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ TODAY'S PLAN ════ -->
+  <section id="panel-plan" class="tab-panel" aria-labelledby="tab-plan">
+
+    <div class="schedule-day-select">
+      <button class="day-nav-btn" id="plan-prev" aria-label="Previous day">‹</button>
+      <div class="day-label" id="plan-day-label">Day 1</div>
+      <button class="day-nav-btn" id="plan-next" aria-label="Next day">›</button>
+      <div style="flex:1"></div>
+      <div style="font-size:12px; color: var(--text-muted);" id="plan-date-label"></div>
+    </div>
+
+    <div class="schedule-grid" id="schedule-grid">
+      <!-- Injected by app.js -->
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ KANBAN ══════════ -->
+  <section id="panel-kanban" class="tab-panel" aria-labelledby="tab-kanban">
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Kanban Board</div>
+        <div class="section-sub">Drag tasks between columns · Click + to add a custom task</div>
+      </div>
+      <button class="btn-primary" id="open-add-card">+ Add Task</button>
+    </div>
+
+    <div class="kanban-pillar-tabs" id="kanban-pillar-tabs">
+      <button class="kp-tab active" data-kpillar="all" style="--pc: #e879f9">🌐 All</button>
+      <!-- more injected by app.js -->
+    </div>
+
+    <div class="kanban-board" id="kanban-board">
+      <div class="kanban-col" id="kol-todo"        data-col="todo"       ondragover="event.preventDefault()" ondrop="App.kanban.onDrop(event, 'todo')">
+        <div class="col-header">
+          <div class="col-title"><div class="col-dot" style="background:#fb923c"></div> To Do</div>
+          <div class="col-count" id="count-todo">0</div>
+        </div>
+        <div class="kanban-cards" id="cards-todo"></div>
+        <button class="add-card-btn" onclick="App.kanban.openAdd('todo')">+ Add task</button>
+      </div>
+      <div class="kanban-col" id="kol-inprogress" data-col="inprogress"  ondragover="event.preventDefault()" ondrop="App.kanban.onDrop(event, 'inprogress')">
+        <div class="col-header">
+          <div class="col-title"><div class="col-dot" style="background:#60a5fa"></div> In Progress</div>
+          <div class="col-count" id="count-inprogress">0</div>
+        </div>
+        <div class="kanban-cards" id="cards-inprogress"></div>
+        <button class="add-card-btn" onclick="App.kanban.openAdd('inprogress')">+ Add task</button>
+      </div>
+      <div class="kanban-col" id="kol-done"        data-col="done"       ondragover="event.preventDefault()" ondrop="App.kanban.onDrop(event, 'done')">
+        <div class="col-header">
+          <div class="col-title"><div class="col-dot" style="background:#34d399"></div> Done</div>
+          <div class="col-count" id="count-done">0</div>
+        </div>
+        <div class="kanban-cards" id="cards-done"></div>
+        <button class="add-card-btn" onclick="App.kanban.openAdd('done')">+ Add task</button>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ PROGRESS ════════ -->
+  <section id="panel-progress" class="tab-panel" aria-labelledby="tab-progress">
+
+    <div class="section-header">
+      <div class="section-title">Learning Progress</div>
+      <div class="section-sub">Your 30-day journey at a glance</div>
+    </div>
+
+    <div class="progress-charts">
+      <!-- Streak Calendar -->
+      <div class="chart-card">
+        <div class="chart-title">📆 30-Day Streak Calendar</div>
+        <div style="display:grid; grid-template-columns: repeat(7,1fr); gap:3px; margin-bottom:8px;">
+          <div class="streak-day-label">S</div><div class="streak-day-label">M</div>
+          <div class="streak-day-label">T</div><div class="streak-day-label">W</div>
+          <div class="streak-day-label">T</div><div class="streak-day-label">F</div>
+          <div class="streak-day-label">S</div>
+        </div>
+        <div class="streak-grid" id="streak-grid">
+          <!-- Injected by app.js -->
+        </div>
+      </div>
+
+      <!-- Per-Pillar Progress -->
+      <div class="chart-card">
+        <div class="chart-title">🎯 Pillar Progress (Day <span id="prog-day">1</span>)</div>
+        <div class="pillar-progress-list" id="pillar-progress-list">
+          <!-- Injected by app.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- XP & Badges -->
+    <div class="xp-section">
+      <div class="section-header" style="margin-bottom:16px;">
+        <div>
+          <div class="section-title">⭐ XP & Badges</div>
+          <div class="section-sub">Level <span id="xp-level">1</span> · <span id="xp-to-next">100</span> XP to next level</div>
+        </div>
+        <div style="font-family:'Outfit',sans-serif; font-size:32px; font-weight:800; background:linear-gradient(90deg,#e879f9,#facc15); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;" id="xp-total-display">0 XP</div>
+      </div>
+      <div class="xp-bar-label">
+        <span>Level <span id="xp-lvl-from">1</span></span>
+        <span>Level <span id="xp-lvl-to">2</span></span>
+      </div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-fill" id="xp-bar-fill"></div>
+      </div>
+      <div class="badges-grid" id="badges-grid">
+        <!-- Injected by app.js -->
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ RESOURCES ═══════ -->
+  <section id="panel-resources" class="tab-panel" aria-labelledby="tab-resources">
+
+    <div class="section-header">
+      <div class="section-title">📚 Curated Resources</div>
+      <div class="section-sub">Handpicked links for each pillar</div>
+    </div>
+
+    <div class="resources-grid" id="resources-grid">
+      <!-- Injected by app.js -->
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ── MODAL ──────────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal" id="modal">
+    <div class="modal-title" id="modal-title">Add Task</div>
+    <input  class="modal-input"  id="modal-task-title"  placeholder="Task title…" type="text" />
+    <input  class="modal-input"  id="modal-task-sub"    placeholder="Description (optional)…" type="text" />
+    <select class="modal-select" id="modal-task-pillar">
+      <option value="articulation">🗣️ Articulation & Confidence</option>
+      <option value="databricks">🧱 Databricks</option>
+      <option value="mean">⚙️ MEAN Stack</option>
+      <option value="ai">🤖 AI Learning</option>
+      <option value="project">🚀 Own Project</option>
+    </select>
+    <select class="modal-select" id="modal-task-priority">
+      <option value="high">🔴 High Priority</option>
+      <option value="med">🔵 Medium Priority</option>
+      <option value="low">🟢 Low Priority</option>
+    </select>
+    <select class="modal-select" id="modal-task-col">
+      <option value="todo">To Do</option>
+      <option value="inprogress">In Progress</option>
+      <option value="done">Done</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-ghost"    id="modal-cancel">Cancel</button>
+      <button class="btn-primary"  id="modal-save">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ───────────────────────────────────────────────────── -->
+<div id="toast-container" aria-live="polite"></div>
+
+<!-- ── SCRIPTS ────────────────────────────────────────────────────────────── -->
+<script src="data/curriculum.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
