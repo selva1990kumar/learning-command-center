@@ -308,7 +308,17 @@ App.timer = (() => {
       const today  = todayKey();
       if (!S.dayData[today]) S.dayData[today] = {};
       if (!S.dayData[today].timers) S.dayData[today].timers = {};
-      S.dayData[today].timers[active] = (S.dayData[today].timers[active] || 0) + (remaining < 0 ? elapsed : elapsed);
+      
+      const loggedSeconds = (remaining < 0 ? elapsed : elapsed);
+      S.dayData[today].timers[active] = (S.dayData[today].timers[active] || 0) + loggedSeconds;
+      
+      // Async Notion Sync: Log Session Hours
+      syncNotion('log_session', {
+        pillar: active,
+        hours: parseFloat((loggedSeconds / 3600).toFixed(2)),
+        day: computeCurrentDay()
+      });
+
       addXP(50);
       pause();
       toast(`🎉 Pomodoro complete! +50 XP for ${pillar.icon} ${pillar.name}`, '⭐');
@@ -397,6 +407,14 @@ App.plan = (() => {
     const wasTrue = S.dayData[dateStr].tasks[key];
     S.dayData[dateStr].tasks[key] = !wasTrue;
     if (!wasTrue) addXP(10);
+    
+    // Async Notion Sync: Mark Task status in Curriculum
+    syncNotion('mark_task_done', { 
+      pillar: pillarId, 
+      day: computeCurrentDay(), 
+      status: !wasTrue ? 'Completed' : 'In Progress' 
+    });
+
     saveState();
     // Update UI
     elLi.classList.toggle('done', !wasTrue);
@@ -688,6 +706,10 @@ function markDayComplete() {
   }
   S.lastCompletedDate = today;
   addXP(100);
+  
+  // Async Notion Sync: Mark all of today's pillars as Completed
+  syncNotion('complete_day', { day: computeCurrentDay() });
+
   saveState();
   renderTopbar();
   renderStreakGrid();
@@ -713,6 +735,25 @@ function initTabs() {
       if (tabId === 'resources')  renderResources();
     });
   });
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   NOTION SYNC API BRIDGE
+   ────────────────────────────────────────────────────────────────────────── */
+async function syncNotion(action, payload) {
+  try {
+    const idsRes = await fetch('./notion/notion-ids.json');
+    if (!idsRes.ok) return; // Silent skip if DB ids not generated locally yet
+    const ids = await idsRes.json();
+    
+    await fetch('/api/notion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, payload, ids })
+    });
+  } catch (err) {
+    console.debug('Dashboard Notion Sync Skipped/Failed', err);
+  }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────

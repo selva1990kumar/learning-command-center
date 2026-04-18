@@ -1,0 +1,8 @@
+{
+  "name": "learning-command-center",
+  "version": "1.0.0",
+  "description": "Learning Command Center Dashboard",
+  "dependencies": {
+    "@notionhq/client": "^2.2.14"
+  }
+}
